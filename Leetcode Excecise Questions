@@ -28,3 +28,7 @@ select
     from Department
     group by id;
 
+#question no 596
+select class from Courses
+group by class
+having count(class) >= 5;
