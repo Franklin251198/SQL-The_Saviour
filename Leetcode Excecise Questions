@@ -1,6 +1,5 @@
 LeetCode Question 
 #Question no 1141
-
 SELECT 
     activity_date AS day,
     COUNT(DISTINCT user_id) AS active_users
@@ -28,6 +27,7 @@ select
     from Department
     group by id;
 
+
 #question no 596
 select class from Courses
 group by class
@@ -40,6 +40,7 @@ left join UnitsSold u on p.product_id = u.product_id
 and u.purchase_date between p.start_date and p.end_date
 group by product_id;
 
+
 #question no 1280
 # Write your MySQL query statement below
 select s.student_id,s.student_name,SU.subject_name,count(e.student_id) as attended_exams 
@@ -47,3 +48,35 @@ from Students s  cross join Subjects SU left join Examinations e
 on s.student_id = e.student_id  and SU.subject_name = e.subject_name
 group by s.student_id, s.student_name, SU.subject_name
 order by s.student_id, s.student_name, Su.subject_name;
+
+
+#question no 1158
+# Write your MySQL query statement below
+select 
+u.user_id as buyer_id,
+u.join_date,
+count(o.order_id) as orders_in_2019
+from users u 
+left join orders o 
+on u.user_id=o.buyer_id 
+and YEAR(o.order_date)=2019
+group by u.user_id,u.join_date;
+
+
+#question no 1158
+select 
+    product_id,10 as price
+    from Products 
+    group by product_id
+    having min(change_date) > '2019-08-16'
+union all
+
+select 
+    p1.product_id,p1.new_price as price
+    from Products p1
+    where (p1.product_id,p1.change_date) in 
+    (select product_id,max(change_date) 
+    from Products where change_date <='2019-08-16'
+    group by product_id);
+
+
