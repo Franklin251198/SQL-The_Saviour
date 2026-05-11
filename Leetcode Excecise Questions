@@ -8,7 +8,7 @@ WHERE activity_date BETWEEN DATE('2019-07-27') - INTERVAL 29 DAY
                         AND '2019-07-27'
 GROUP BY activity_date;
 
-
+---------------------------------------------------------------------------------------------------------
 #question no 1179
 select 
     id, 
@@ -26,6 +26,7 @@ select
     SUM(CASE WHEN month = 'Dec' THEN revenue ELSE NULL END) AS Dec_Revenue
     from Department
     group by id;
+---------------------------------------------------------------------------------------------------------
 
 
 #question no 596
@@ -33,12 +34,14 @@ select class from Courses
 group by class
 having count(class) >= 5;
 
+---------------------------------------------------------------------------------------------------------
 
 #question no 1251
 select p.product_id,ifnull(round(sum(p.price*u.units)/sum(u.units),2),0) as average_price from Prices p
 left join UnitsSold u on p.product_id = u.product_id
 and u.purchase_date between p.start_date and p.end_date
 group by product_id;
+---------------------------------------------------------------------------------------------------------
 
 
 #question no 1280
@@ -49,6 +52,7 @@ on s.student_id = e.student_id  and SU.subject_name = e.subject_name
 group by s.student_id, s.student_name, SU.subject_name
 order by s.student_id, s.student_name, Su.subject_name;
 
+---------------------------------------------------------------------------------------------------------
 
 #question no 1158
 # Write your MySQL query statement below
@@ -61,6 +65,7 @@ left join orders o
 on u.user_id=o.buyer_id 
 and YEAR(o.order_date)=2019
 group by u.user_id,u.join_date;
+---------------------------------------------------------------------------------------------------------
 
 
 #question no 1158
@@ -80,7 +85,6 @@ select
     group by product_id);
 
 ------------------------OR------------------------
-
 
 WITH cte AS
 (
@@ -104,6 +108,105 @@ FROM
     SELECT DISTINCT product_id
     FROM Products
 ) p
+
 LEFT JOIN cte c
     ON p.product_id = c.product_id
     AND c.rn = 1;
+---------------------------------------------------------------------------------------------------------
+
+
+#Question no 1193
+# Write your MySQL query statement below
+SELECT
+    DATE_FORMAT(trans_date, '%Y-%m') AS month,
+    country,
+
+    COUNT(*) AS trans_count,
+
+    SUM(amount) AS trans_total_amount,
+
+    SUM(
+        CASE
+            WHEN state = 'approved'
+            THEN 1
+            ELSE 0
+        END
+    ) AS approved_count,
+
+    SUM(
+        CASE
+            WHEN state = 'approved'
+            THEN amount
+            ELSE 0
+        END
+    ) AS approved_total_amount
+
+FROM Transactions
+
+GROUP BY
+    DATE_FORMAT(trans_date, '%Y-%m'),
+    country;
+---------------------------------------------------------------------------------------------------------
+
+
+#question no 3421
+
+SELECT 
+    student_id,
+    subject,
+
+    (
+        SELECT s2.score
+        FROM Scores s2
+        WHERE s2.student_id = s1.student_id
+          AND s2.subject = s1.subject
+          AND s2.exam_date =
+          (
+              SELECT MIN(s3.exam_date)
+              FROM Scores s3
+              WHERE s3.student_id = s1.student_id
+                AND s3.subject = s1.subject
+          )
+        LIMIT 1
+    ) AS first_score,
+
+    (
+        SELECT s2.score
+        FROM Scores s2
+        WHERE s2.student_id = s1.student_id
+          AND s2.subject = s1.subject
+          AND s2.exam_date =
+          (
+              SELECT MAX(s3.exam_date)
+              FROM Scores s3
+              WHERE s3.student_id = s1.student_id
+                AND s3.subject = s1.subject
+          )
+        LIMIT 1
+    ) AS latest_score
+
+FROM Scores s1
+GROUP BY s1.student_id, s1.subject
+HAVING COUNT(*) >= 2
+   AND latest_score > first_score
+
+ORDER BY student_id, subject; 
+---------------------OR---------------------------
+
+with cte as 
+( select student_id,subject,score,exam_date,
+ROW_NUMBER() OVER(PARTITION  BY  student_id, subject ORDER by exam_date ) as first_rn,
+ROW_NUMBER() over(PARTITION BY student_id , subject order by exam_date desc ) as latest_rn,
+count(*) over(partition by student_id,subject) as exam_count
+from Scores )
+Select student_id, subject , max(Case when first_rn = 1 then score End) as first_score,
+max(case when latest_rn = 1 then score End) as latest_score
+from cte
+group by student_id, subject
+having MAX(exam_count)  >= 2
+and latest_score>first_score
+order by student_id,subject;
+
+---------------------------------------------------------------------------------------------------------
+
+
