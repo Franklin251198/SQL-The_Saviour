@@ -208,5 +208,45 @@ and latest_score>first_score
 order by student_id,subject;
 
 ---------------------------------------------------------------------------------------------------------
+#question no 1121
+select
+query_name,
+round(avg(cast(rating as decimal) / position), 2) as quality,
+round(sum(case when rating < 3 then 1 else 0 end) * 100 / count(*), 2) as poor_query_percentage
+from
+queries
+group by
+query_name;
+---------------------------------------------------------------------------------------------------------
 
+#question no 1327
+# Write your MySQL query statement below
+select p.product_name,sum(o.unit) as unit from Products p inner join Orders o 
+on p.product_id=o.product_id
+where MONTH(o.order_date) = 2 and year(o.order_date)=2020
+group by product_name
+having sum(o.unit) >= 100 ;
+---------------------------------------------------------------------------------------------------------
 
+#question no 1174
+# Write your MySQL query statement below
+SELECT
+    ROUND(
+        100 * AVG(
+            CASE
+                WHEN  order_date = customer_pref_delivery_date
+                THEN 1
+                ELSE 0
+            END
+        ),
+        2
+    ) AS immediate_percentage
+FROM Delivery
+WHERE (customer_id, order_date) IN
+(
+    SELECT
+        customer_id,
+        MIN(order_date)
+    FROM Delivery
+    GROUP BY customer_id
+);
