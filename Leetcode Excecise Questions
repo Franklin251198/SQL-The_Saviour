@@ -258,3 +258,17 @@ select
 s1.product_id,s1.year as first_year,s1.quantity,s1.price 
 from Sales s1
 where (s1.product_id,s1.year) in (select s2.product_id,min(s2.year) from sales s2 group by s2.product_id);
+
+---------------------------------------------------------------------------------------------------------
+#question no 626
+select 
+case 
+when id%2=1
+and id != (select max(id) from Seat)
+then id+1
+when id%2=0
+then id-1
+else id
+end as id,student
+from Seat
+order by id;
