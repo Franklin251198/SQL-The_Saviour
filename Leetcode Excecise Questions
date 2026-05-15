@@ -278,3 +278,30 @@ order by id;
 
 SELECT  customer_id FROM Customer GROUP BY customer_id
 HAVING COUNT(distinct product_key) = (SELECT COUNT(product_key) FROM Product);
+
+---------------------------------------------------------------------------------------------------------
+#question no 1050
+select 
+    actor_id,
+    director_id
+    from ActorDirector
+    group by actor_id,director_id
+    having count(timestamp) >= 3;
+
+---------------------------------------------------------------------------------------------------------
+#question no 627
+UPDATE salary SET sex =
+CASE sex
+    WHEN 'm' THEN 'f'
+    ELSE 'm'
+END;
+
+---------------------------------------------------------------------------------------------------------
+#question no 608
+select id,
+    case 
+    when p_id is NULL then 'Root'
+    when id in (select p_id from Tree) then 'Inner'
+    else 'Leaf'
+    End as type
+from Tree 
