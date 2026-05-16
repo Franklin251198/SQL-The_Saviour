@@ -11,3 +11,16 @@
 | “last 30 days”                  | DATE                      |
 | “duplicate”                     | GROUP BY + HAVING         |
 | “hierarchy”                     | SELF JOIN / RECURSIVE CTE |
+
+
+
+# Actual SQL Execution Order
+1. FROM
+2. JOIN
+3. WHERE
+4. GROUP BY
+5. HAVING
+6. SELECT
+7. DISTINCT
+8. ORDER BY
+9. LIMIT
